@@ -6,6 +6,7 @@ import re
 SOLUTION_PATTERN = r'<em class="correct_response">.+</em>'
 DATE_PATTERN = r'\d{4}-\d{2}-\d{2}'
 
+
 def get_game_urls_after_date(date_threshold):
     link = "http://j-archive.com/listseasons.php"
     response = requests.get(link)

@@ -15,6 +15,9 @@ tkcalendar = "^1.6.1"
 babel = "^2.12.1"
 pillow = "^9.4.0"
 
+[tool.poetry.group.dev.dependencies]
+pycodestyle = "^2.10.0"
+
 [build-system]
 build-backend = "poetry.core.masonry.api"
 requires = ["poetry-core"]
