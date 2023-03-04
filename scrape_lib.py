@@ -3,25 +3,17 @@ from bs4 import BeautifulSoup
 import requests
 import re
 
-pattern = r'\d{4}-\d{2}-\d{2}'
-clue_pattern = r'clue_(J|DJ)(_\d+_\d+)*'
-solution_pattern = r"correct_response&quot;&gt;([^']*)&lt;/em&gt;"
+SOLUTION_PATTERN = r'<em class="correct_response">.+</em>'
+DATE_PATTERN = r'\d{4}-\d{2}-\d{2}'
 
-
-def get_game_urls_before_date(date_threshold):
-    # Fetch the HTML content of the link
+def get_game_urls_after_date(date_threshold):
     link = "http://j-archive.com/listseasons.php"
     response = requests.get(link)
     html_content = response.content
+
     stop_looping = False
-
-    # Parse the HTML content using BeautifulSoup
     soup = BeautifulSoup(html_content, 'html.parser')
-
-    # Find all the links to the individual seasons
     season_links = soup.find_all('a', href=True)
-
-    # Extract the URLs and season names from the links
     season_urls = []
     season_names = []
     for link in season_links:
@@ -29,7 +21,6 @@ def get_game_urls_before_date(date_threshold):
             season_urls.append(link['href'])
             season_names.append(link.text)
 
-    # Print the URLs and names of the seasons
     game_urls = []
     for url, _ in zip(season_urls, season_names):
         response = requests.get(f"http://j-archive.com/{url}")
@@ -39,19 +30,14 @@ def get_game_urls_before_date(date_threshold):
 
         for link in episode_links:
             if link.text.startswith("#"):
-                # print(link.text)
-                match = re.search(pattern, link.text)
+                match = re.search(DATE_PATTERN, link.text)
                 date_string = match.group(0)
-
                 date = datetime.strptime(date_string, '%Y-%m-%d')
-
-                # Define the arbitrary date for comparison
                 arbitrary_date = datetime.strptime(
                     date_threshold, '%Y-%m-%d')
                 if date < arbitrary_date:
                     stop_looping = True
                     break
-                # print(link['href'])
                 game_urls.append(link['href'])
         if stop_looping:
             break
@@ -117,8 +103,7 @@ def gather_clue_and_answer_from_simple_round(clue, categories):
 
 
 def _scrape_clue_and_answer(clue, categories, javascript_function):
-    pattern = r'<em class="correct_response">.+</em>'
-    match = re.search(pattern, javascript_function)
+    match = re.search(SOLUTION_PATTERN, javascript_function)
     third_param = match.group(0)
     solution = third_param.replace(
         '<em class="correct_response">', '').replace("</em>", '')
@@ -153,5 +138,5 @@ def scrape(game_urls):
 
 
 if __name__ == "__main__":
-    for show_object in scrape(get_game_urls_before_date("2023-03-01")):
+    for show_object in scrape(get_game_urls_after_date("2023-03-01")):
         print(show_object)

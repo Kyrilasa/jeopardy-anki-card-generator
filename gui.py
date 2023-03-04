@@ -7,7 +7,7 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkcalendar import Calendar
 from tkinter import filedialog
-from scrape_lib import get_game_urls_before_date, scrape
+from scrape_lib import get_game_urls_after_date, scrape
 import babel.numbers
 # Create a tkinter window
 window = tk.Tk()
@@ -153,7 +153,7 @@ def submit():
     # Call the generate_anki_deck function in a separate thread
 
     def generate_deck():
-        game_urls = get_game_urls_before_date(formatted_date)
+        game_urls = get_game_urls_after_date(formatted_date)
         generate_anki_deck(game_urls, file_path, formatted_date,
                            current_date_obj.strftime("%Y-%m-%d"), update_progress)
 
