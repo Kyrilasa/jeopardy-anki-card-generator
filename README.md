@@ -9,4 +9,4 @@ To run the program from command line:
 
 To build it(the executable will be host system specific and reside under the dist/ folder):
 
-`poetry run pyinstaller --onefile -w --icon=app.ico gui.py`g
+`poetry run pyinstaller --onefile -w --icon=app.ico gui.py`
